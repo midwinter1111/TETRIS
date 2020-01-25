@@ -22,6 +22,7 @@ import Minos.NextMinos;
 import Minos.OMino;
 import Minos.SMino;
 import Minos.TMino;
+import Minos.NextMinos;
 
 public class MainPanel extends JPanel implements KeyListener, Runnable {
 	// パネルサイズ
@@ -100,6 +101,9 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 				mino = nextMinos.popNextMinoAndSupply();
 				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
 				isHold = false;
+			if(isLockDown) {
+				mino = nextMinos.popNextMinoAndSupply();
+				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
 			}
 
 			// ミノがそろった行を消す
@@ -126,6 +130,8 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 				mino = createMino(field);
 				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
 				holdMinoPanel.set(null, minoImage);
+				mino = nextMinos.popNextMinoAndSupply();
+				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
 			}
 
 			repaint();
@@ -187,28 +193,6 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 
 	public void keyReleased(KeyEvent e) {
 
-	}
-
-	private Mino createMino(Field field) {
-		int minoNo = rand.nextInt(7);
-		switch (minoNo) {
-		case Mino.IMino:
-			return new IMino(field);
-		case Mino.ZMino:
-			return new Mino(field);
-		case Mino.SMino:
-			return new SMino(field);
-		case Mino.LMino:
-			return new LMino(field);
-		case Mino.JMino:
-			return new JMino(field);
-		case Mino.TMino:
-			return new TMino(field);
-		case Mino.OMino:
-			return new OMino(field);
-		}
-
-		return null;
 	}
 
 	/**
