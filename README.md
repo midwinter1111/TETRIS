@@ -1,6 +1,9 @@
 # TETRIS
 
 テトリスをちゃんと作ろうプロジェクト  
+
+目指す姿  
+![テトリス進捗](https://i.imgur.com/YWmMeZb.png)
   
 進捗  
 ![テトリス進捗](https://i.imgur.com/AoNyIII.png)
