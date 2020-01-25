@@ -149,6 +149,8 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		} else if (key == KeyEvent.VK_DOWN) { // ブロックを下へ移動
 			mino.move(Mino.DOWN);
 			scorePanel.plusScore(USER_DROP);
+		} else if(key == KeyEvent.VK_UP) {
+			mino.move(Mino.HARDDROP);
 		} else if (key == KeyEvent.VK_SPACE || key == KeyEvent.VK_UP) { // ブロックを回転
 			mino.spin();
 		}
