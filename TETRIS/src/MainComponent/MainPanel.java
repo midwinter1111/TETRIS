@@ -57,19 +57,24 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	private ScorePanel scorePanel;
 
 	// ネクストへの参照
-	private NextMinoPanel nextMinoPanel;
+	private NextMinoPanel nextMinoPanel_1;
+	private NextMinoPanel nextMinoPanel_2;
+	private NextMinoPanel nextMinoPanel_3;
 
 	// ホールドしたミノへの参照
 	private HoldMinoPanel holdMinoPanel;
 
-	public MainPanel(ScorePanel scorePanel, NextMinoPanel nextMinoPanel, HoldMinoPanel holdMinoPanel) {
+	public MainPanel(ScorePanel scorePanel, NextMinoPanel nextMinoPanel_1,
+			NextMinoPanel nextMinoPanel_2, NextMinoPanel nextMinoPanel_3, HoldMinoPanel holdMinoPanel) {
 		// パネルの推奨サイズを設定、pack()するときに必要
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		// パネルがキー入力を受け付けるようにする
 		setFocusable(true);
 
 		this.scorePanel = scorePanel;
-		this.nextMinoPanel = nextMinoPanel;
+		this.nextMinoPanel_1 = nextMinoPanel_1;
+		this.nextMinoPanel_2 = nextMinoPanel_2;
+		this.nextMinoPanel_3 = nextMinoPanel_3;
 		this.holdMinoPanel = holdMinoPanel;
 
 		// ブロックのイメージをロード (Eclipse仕様を想定)
@@ -82,7 +87,9 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		field = new Field();
 		nextMinos = new NextMinos(field);
 		mino = nextMinos.popNextMinoAndSupply();
-		nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
+		nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
+		nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
+		nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
 		holdMino = null;
 		isHold = false;
 
@@ -99,7 +106,9 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 			boolean isLockDown = mino.move(Mino.DOWN);
 			if (isLockDown) {
 				mino = nextMinos.popNextMinoAndSupply();
-				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
+				nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
+				nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
+				nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
 				isHold = false;
 			if(isLockDown) {
 				mino = nextMinos.popNextMinoAndSupply();
@@ -128,7 +137,9 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 				// フィールドをリセット
 				field = new Field();
 				mino = createMino(field);
-				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
+				nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
+				nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
+				nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
 				holdMinoPanel.set(null, minoImage);
 				mino = nextMinos.popNextMinoAndSupply();
 				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
@@ -137,7 +148,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 			repaint();
 
 			try {
-				Thread.sleep(200);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
