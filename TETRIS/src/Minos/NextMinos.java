@@ -39,7 +39,7 @@ public class NextMinos {
 		case Mino.IMino:
 			return new IMino(field);
 		case Mino.ZMino:
-			return new Mino(field);
+			return new ZMino(field);
 		case Mino.SMino:
 			return new SMino(field);
 		case Mino.LMino:
