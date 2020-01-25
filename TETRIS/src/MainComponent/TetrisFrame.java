@@ -2,12 +2,15 @@ package MainComponent;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import FrameComponent.HoldMinoPanel;
+import FrameComponent.HoldZoneTag;
 import FrameComponent.NextMinoPanel;
+import FrameComponent.NextZoneTag;
 import FrameComponent.ScorePanel;
 
 public class TetrisFrame extends JFrame {
@@ -25,25 +28,41 @@ public class TetrisFrame extends JFrame {
 
 		// スコアパネル
 		ScorePanel scorePanel = new ScorePanel();
+		NextZoneTag nextZoneTag = new NextZoneTag();
+		JPanel infoPanel = new JPanel();
+		infoPanel.setLayout(new GridLayout(2, 1));
+		infoPanel.add(scorePanel);
+		infoPanel.add(nextZoneTag);
 
 		// ネクスト
-		NextMinoPanel nextMinoPanel = new NextMinoPanel();
+		NextMinoPanel nextMinoPanel_1 = new NextMinoPanel();
+		NextMinoPanel nextMinoPanel_2 = new NextMinoPanel();
+		NextMinoPanel nextMinoPanel_3 = new NextMinoPanel();
+		JPanel nextPanel = new JPanel();
+		nextPanel.setLayout(new GridLayout(3, 1));
+		nextPanel.add(nextMinoPanel_1);
+		nextPanel.add(nextMinoPanel_2);
+		nextPanel.add(nextMinoPanel_3);
 
-		rightPanel.add(scorePanel, BorderLayout.NORTH);
-		rightPanel.add(nextMinoPanel, BorderLayout.CENTER);
+		rightPanel.add(infoPanel, BorderLayout.NORTH);
+		rightPanel.add(nextPanel, BorderLayout.CENTER);
 
 		// 左側パネル
 		JPanel leftPanel = new JPanel();
 		leftPanel.setLayout(new BorderLayout());
 
+		HoldZoneTag holdZoneTag = new HoldZoneTag();
+
 		// ホールドしたミノを表示するパネル
 		HoldMinoPanel holdMinoPanel = new HoldMinoPanel();
-		leftPanel.add(holdMinoPanel, BorderLayout.NORTH);
+		leftPanel.add(holdZoneTag, BorderLayout.NORTH);
+		leftPanel.add(holdMinoPanel, BorderLayout.CENTER);
 
 		// メインパネルを作成してフレームに追加
 		// メインパネルからスコア表示パネルを操作するため
 		// scorePanel, nextMinoPanelを渡す必要あり！
-		MainPanel mainPanel = new MainPanel(scorePanel, nextMinoPanel, holdMinoPanel);
+		MainPanel mainPanel = new MainPanel(scorePanel, nextMinoPanel_1,
+				nextMinoPanel_2, nextMinoPanel_3, holdMinoPanel);
 		contentPane.add(mainPanel, BorderLayout.CENTER);
 		contentPane.add(rightPanel, BorderLayout.EAST);
 		contentPane.add(leftPanel, BorderLayout.WEST);
