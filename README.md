@@ -2,6 +2,9 @@
 
 テトリスをちゃんと作ろうプロジェクト  
   
+進捗  
+![テトリス進捗](https://i.imgur.com/AoNyIII.png)
+  
 ## 参考  
 [1] 母体: Javaでゲーム作りますが何か? http://aidiary.hatenablog.com/entry/20040918/1251373370  
 [2] ルールとか: Tetrisちゃんねる https://tetrisch.github.io/main/rule.html  
