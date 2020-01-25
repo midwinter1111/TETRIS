@@ -97,6 +97,46 @@ public class Mino {
 		}
 	}
 
+	public void drawShadow(Graphics g, Image minoImage) {
+		Point[] shadowPos = new Point[4];
+		int index = 0;
+		// ミノの位置を特定
+		for (int i = 0; i < ROW; i++) {
+			for (int j = 0; j < COL; j++) {
+				if (mino[i][j] == 1) {
+					shadowPos[index] = new Point(i, j);
+					index++;
+				}
+			}
+		}
+		// ミノを下まで落として影の位置を設定
+		int shadowY = pos.y;
+		while (field.isMovable(new Point(pos.x, shadowY + 1), mino)) {
+			shadowY += 1;
+		}
+
+		for (int k = 0; k < 4; k++) {
+			for (int i = 0; i < ROW; i++) {
+				for (int j = 0; j < COL; j++) {
+					if (mino[i][j] == 1) {
+						g.drawImage(minoImage, (pos.x + j) * TILE_SIZE, (shadowY + i) * TILE_SIZE,
+								(pos.x + j) * TILE_SIZE + TILE_SIZE, (shadowY + i) * TILE_SIZE + TILE_SIZE,
+								(imageNo + 8) * TILE_SIZE, 0, (imageNo + 8) * TILE_SIZE + TILE_SIZE, TILE_SIZE, null);
+					}
+				}
+			}
+		}
+
+	}
+
+	/*
+	case HARDDROP:
+	while(field.isMovable(new Point(pos.x, pos.y+1),  mino)) {
+		pos.y += 1;
+	}
+	field.lockDown(new Point(pos.x, pos.y), mino, imageNo);
+	return true;*/
+
 	/**
 	 * dirの方向にテトリミノを移動
 	 *
@@ -127,7 +167,7 @@ public class Mino {
 			}
 			break;
 		case HARDDROP:
-			while(field.isMovable(new Point(pos.x, pos.y+1),  mino)) {
+			while (field.isMovable(new Point(pos.x, pos.y + 1), mino)) {
 				pos.y += 1;
 			}
 			field.lockDown(new Point(pos.x, pos.y), mino, imageNo);
@@ -143,14 +183,14 @@ public class Mino {
 		int[][] spinnedMino = new int[ROW][COL];
 
 		// 回転したミノ
-		for(int i=0; i<ROW; i++) {
-			for(int j=0; j<COL; j++) {
-				spinnedMino[j][ROW-1-i] = mino[i][j];
+		for (int i = 0; i < ROW; i++) {
+			for (int j = 0; j < COL; j++) {
+				spinnedMino[j][ROW - 1 - i] = mino[i][j];
 			}
 		}
 
 		// 回転可能か調べる
-		if(field.isMovable(pos, spinnedMino)) {
+		if (field.isMovable(pos, spinnedMino)) {
 			mino = spinnedMino;
 		}
 	}
