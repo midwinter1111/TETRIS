@@ -14,12 +14,7 @@ import FrameComponent.Field;
 import FrameComponent.Mino;
 import FrameComponent.NextMinoPanel;
 import FrameComponent.ScorePanel;
-import Minos.IMino;
-import Minos.JMino;
-import Minos.LMino;
-import Minos.OMino;
-import Minos.SMino;
-import Minos.TMino;
+import Minos.NextMinos;
 
 public class MainPanel extends JPanel implements KeyListener, Runnable {
 	// パネルサイズ
@@ -38,7 +33,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	// テトリミノ
 	private Mino mino;
 	// ネクスト
-	private Mino nextMino;
+	private NextMinos nextMinos;
 
 	// テトリミノのイメージ
 	private Image minoImage;
@@ -69,9 +64,9 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		rand.setSeed(System.currentTimeMillis());
 
 		field = new Field();
-		mino = createMino(field);
-		nextMino = createMino(field);
-		nextMinoPanel.set(nextMino, minoImage);
+		nextMinos = new NextMinos(field);
+		mino = nextMinos.popNextMinoAndSupply();
+		nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
 
 		addKeyListener(this);
 
@@ -85,9 +80,8 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 			// ミノを下方向へ移動する
 			boolean isLockDown = mino.move(Mino.DOWN);
 			if(isLockDown) {
-				mino = nextMino;
-				nextMino = createMino(field);
-				nextMinoPanel.set(nextMino, minoImage);
+				mino = nextMinos.popNextMinoAndSupply();
+				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
 			}
 
 			// ミノがそろった行を消す
@@ -111,9 +105,8 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 				scorePanel.setScore(0);
 				// フィールドをリセット
 				field = new Field();
-				mino = createMino(field);
-				nextMino = createMino(field);
-				nextMinoPanel.set(nextMino, minoImage);
+				mino = nextMinos.popNextMinoAndSupply();
+				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
 			}
 
 			repaint();
@@ -160,28 +153,6 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 
 	public void keyReleased(KeyEvent e) {
 
-	}
-
-	private Mino createMino(Field field) {
-		int minoNo = rand.nextInt(7);
-		switch (minoNo) {
-		case Mino.IMino:
-			return new IMino(field);
-		case Mino.ZMino:
-			return new Mino(field);
-		case Mino.SMino:
-			return new SMino(field);
-		case Mino.LMino:
-			return new LMino(field);
-		case Mino.JMino:
-			return new JMino(field);
-		case Mino.TMino:
-			return new TMino(field);
-		case Mino.OMino:
-			return new OMino(field);
-		}
-
-		return null;
 	}
 
 	/**
