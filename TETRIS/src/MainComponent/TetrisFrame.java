@@ -38,11 +38,13 @@ public class TetrisFrame extends JFrame {
 		NextMinoPanel nextMinoPanel_1 = new NextMinoPanel();
 		NextMinoPanel nextMinoPanel_2 = new NextMinoPanel();
 		NextMinoPanel nextMinoPanel_3 = new NextMinoPanel();
+		NextMinoPanel nextMinoPanel_4 = new NextMinoPanel();
 		JPanel nextPanel = new JPanel();
-		nextPanel.setLayout(new GridLayout(3, 1));
+		nextPanel.setLayout(new GridLayout(4, 1));
 		nextPanel.add(nextMinoPanel_1);
 		nextPanel.add(nextMinoPanel_2);
 		nextPanel.add(nextMinoPanel_3);
+		nextPanel.add(nextMinoPanel_4);
 
 		rightPanel.add(infoPanel, BorderLayout.NORTH);
 		rightPanel.add(nextPanel, BorderLayout.CENTER);
@@ -62,7 +64,7 @@ public class TetrisFrame extends JFrame {
 		// メインパネルからスコア表示パネルを操作するため
 		// scorePanel, nextMinoPanelを渡す必要あり！
 		MainPanel mainPanel = new MainPanel(scorePanel, nextMinoPanel_1,
-				nextMinoPanel_2, nextMinoPanel_3, holdMinoPanel);
+				nextMinoPanel_2, nextMinoPanel_3, nextMinoPanel_4, holdMinoPanel);
 		contentPane.add(mainPanel, BorderLayout.CENTER);
 		contentPane.add(rightPanel, BorderLayout.EAST);
 		contentPane.add(leftPanel, BorderLayout.WEST);

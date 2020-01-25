@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 public class NextMinoPanel extends JPanel {
 	public static final int WIDTH = 96;
-	public static final int HEIGHT = 135;
+	public static final int HEIGHT = 96;
 
 	private Mino nextMino;
 	private Image minoImage;
