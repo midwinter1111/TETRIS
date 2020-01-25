@@ -11,12 +11,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import FrameComponent.Field;
+import FrameComponent.HoldMinoPanel;
 import FrameComponent.Mino;
 import FrameComponent.NextMinoPanel;
 import FrameComponent.ScorePanel;
 import Minos.IMino;
 import Minos.JMino;
 import Minos.LMino;
+import Minos.NextMinos;
 import Minos.OMino;
 import Minos.SMino;
 import Minos.TMino;
@@ -38,7 +40,11 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	// テトリミノ
 	private Mino mino;
 	// ネクスト
-	private Mino nextMino;
+	private NextMinos nextMinos;
+	// ホールドしたミノ
+	private Mino holdMino;
+	// ホールドしたかどうか
+	private boolean isHold;
 
 	// テトリミノのイメージ
 	private Image minoImage;
@@ -52,7 +58,10 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	// ネクストへの参照
 	private NextMinoPanel nextMinoPanel;
 
-	public MainPanel(ScorePanel scorePanel, NextMinoPanel nextMinoPanel) {
+	// ホールドしたミノへの参照
+	private HoldMinoPanel holdMinoPanel;
+
+	public MainPanel(ScorePanel scorePanel, NextMinoPanel nextMinoPanel, HoldMinoPanel holdMinoPanel) {
 		// パネルの推奨サイズを設定、pack()するときに必要
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		// パネルがキー入力を受け付けるようにする
@@ -60,6 +69,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 
 		this.scorePanel = scorePanel;
 		this.nextMinoPanel = nextMinoPanel;
+		this.holdMinoPanel = holdMinoPanel;
 
 		// ブロックのイメージをロード (Eclipse仕様を想定)
 		loadImage("img/mino.gif");
@@ -69,9 +79,11 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		rand.setSeed(System.currentTimeMillis());
 
 		field = new Field();
-		mino = createMino(field);
-		nextMino = createMino(field);
-		nextMinoPanel.set(nextMino, minoImage);
+		nextMinos = new NextMinos(field);
+		mino = nextMinos.popNextMinoAndSupply();
+		nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
+		holdMino = null;
+		isHold = false;
 
 		addKeyListener(this);
 
@@ -81,13 +93,13 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	}
 
 	public void run() {
-		while(true) {
+		while (true) {
 			// ミノを下方向へ移動する
 			boolean isLockDown = mino.move(Mino.DOWN);
-			if(isLockDown) {
-				mino = nextMino;
-				nextMino = createMino(field);
-				nextMinoPanel.set(nextMino, minoImage);
+			if (isLockDown) {
+				mino = nextMinos.popNextMinoAndSupply();
+				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
+				isHold = false;
 			}
 
 			// ミノがそろった行を消す
@@ -95,14 +107,14 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 
 			// 消した行数に応じてスコアをプラスする
 			if (deleteLine == 1) {
-                scorePanel.plusScore(ONE_LINE);
-            } else if (deleteLine == 2) {
-                scorePanel.plusScore(TWO_LINE);
-            } else if (deleteLine == 3) {
-                scorePanel.plusScore(THREE_LINE);
-            } else if (deleteLine == 4) {
-                scorePanel.plusScore(TETRIS);
-            }
+				scorePanel.plusScore(ONE_LINE);
+			} else if (deleteLine == 2) {
+				scorePanel.plusScore(TWO_LINE);
+			} else if (deleteLine == 3) {
+				scorePanel.plusScore(THREE_LINE);
+			} else if (deleteLine == 4) {
+				scorePanel.plusScore(TETRIS);
+			}
 
 			// ゲームオーバーか
 			if (field.isStacked()) {
@@ -112,15 +124,15 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 				// フィールドをリセット
 				field = new Field();
 				mino = createMino(field);
-				nextMino = createMino(field);
-				nextMinoPanel.set(nextMino, minoImage);
+				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
+				holdMinoPanel.set(null, minoImage);
 			}
 
 			repaint();
 
 			try {
 				Thread.sleep(200);
-			} catch(InterruptedException e) {
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
@@ -136,7 +148,22 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	}
 
 	public void keyTyped(KeyEvent e) {
-
+		char key = e.getKeyChar();
+		if (key == 'q' && !isHold) {
+			if (holdMino == null) {
+				holdMino = mino;
+				mino = nextMinos.popNextMinoAndSupply();
+				holdMinoPanel.set(holdMino, minoImage);
+			} else {
+				Mino tmpMino = holdMino;
+				holdMino = mino;
+				mino = tmpMino;
+				holdMinoPanel.set(holdMino, minoImage);
+			}
+			mino.setNewPosForHold();
+			repaint();
+			isHold = true;
+		}
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -149,7 +176,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		} else if (key == KeyEvent.VK_DOWN) { // ブロックを下へ移動
 			mino.move(Mino.DOWN);
 			scorePanel.plusScore(USER_DROP);
-		} else if(key == KeyEvent.VK_UP) {
+		} else if (key == KeyEvent.VK_UP) {
 			mino.move(Mino.HARDDROP);
 		} else if (key == KeyEvent.VK_SPACE || key == KeyEvent.VK_UP) { // ブロックを回転
 			mino.spin();
@@ -185,14 +212,14 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	}
 
 	/**
-     * ブロックのイメージをロード
-     *
-     * @param filename
-     */
-    private void loadImage(String filename) {
-        // ブロックのイメージを読み込む
-        ImageIcon icon = new ImageIcon(filename);
-        minoImage = icon.getImage();
-    }
+	 * ブロックのイメージをロード
+	 *
+	 * @param filename
+	 */
+	private void loadImage(String filename) {
+		// ブロックのイメージを読み込む
+		ImageIcon icon = new ImageIcon(filename);
+		minoImage = icon.getImage();
+	}
 
 }

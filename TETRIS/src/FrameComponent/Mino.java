@@ -101,7 +101,7 @@ public class Mino {
 	 * dirの方向にテトリミノを移動
 	 *
 	 * @param dir 移動方向
-	 * @return ロックダウンされたらにtrueを返す
+	 * @return ロックダウンされたらtrueを返す
 	 */
 	public boolean move(int dir) {
 		switch (dir) {
@@ -153,5 +153,9 @@ public class Mino {
 		if(field.isMovable(pos, spinnedMino)) {
 			mino = spinnedMino;
 		}
+	}
+
+	public void setNewPosForHold() {
+		pos = new Point(4, -4);
 	}
 }
