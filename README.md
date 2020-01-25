@@ -5,6 +5,7 @@
 ## 参考  
 [1] 母体: Javaでゲーム作りますが何か? http://aidiary.hatenablog.com/entry/20040918/1251373370  
 [2] ルールとか: Tetrisちゃんねる https://tetrisch.github.io/main/rule.html  
+[3] テトリスガイドライン参考: https://qiita.com/ki_ki33/items/35566f052af7b916607b  
   
 ## やりたいこと  
   
