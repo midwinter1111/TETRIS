@@ -16,6 +16,7 @@ public class Mino {
 	public static final int LEFT = 0;
 	public static final int RIGHT = 1;
 	public static final int DOWN = 2;
+	public static final int HARDDROP = 3;
 
 	// テトリミノの名前
 	public static final int IMino = 0;
@@ -125,6 +126,12 @@ public class Mino {
 				return true;
 			}
 			break;
+		case HARDDROP:
+			while(field.isMovable(new Point(pos.x, pos.y+1),  mino)) {
+				pos.y += 1;
+			}
+			field.lockDown(new Point(pos.x, pos.y), mino, imageNo);
+			return true;
 		}
 		return false;
 	}
