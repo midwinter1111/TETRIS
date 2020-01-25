@@ -72,7 +72,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		this.holdMinoPanel = holdMinoPanel;
 
 		// ブロックのイメージをロード (Eclipse仕様を想定)
-		loadImage("img/mino.gif");
+		loadImage("img/mino2.gif");
 		System.out.println();
 
 		rand = new Random();
@@ -145,6 +145,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		field.draw(g, minoImage);
 		// テトリミノを描画
 		mino.draw(g, minoImage);
+		mino.drawShadow(g, minoImage);
 	}
 
 	public void keyTyped(KeyEvent e) {
