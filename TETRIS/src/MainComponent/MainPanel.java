@@ -89,6 +89,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		field = new Field();
 		nextMinos = new NextMinos(field);
 		mino = nextMinos.popNextMinoAndSupply();
+		SRSMinoCheck(mino);
 		nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
 		nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
 		nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
@@ -109,6 +110,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 			boolean isLockDown = mino.move(Mino.DOWN);
 			if (isLockDown) {
 				mino = nextMinos.popNextMinoAndSupply();
+				SRSMinoCheck(mino);
 				nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
 				nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
 				nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
@@ -173,6 +175,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 			if (holdMino == null) {
 				holdMino = mino;
 				mino = nextMinos.popNextMinoAndSupply();
+				SRSMinoCheck(mino);
 				holdMinoPanel.set(holdMino, minoImage);
 			} else {
 				Mino tmpMino = holdMino;
@@ -244,6 +247,18 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		// ブロックのイメージを読み込む
 		ImageIcon icon = new ImageIcon(filename);
 		minoImage = icon.getImage();
+	}
+
+	public void SRSMinoCheck(Mino mino) {
+		mino.setIsTMino(false);
+		mino.setIsIMino(false);
+		if(mino instanceof TMino) {
+			mino.setIsTMino(true);
+		}
+		if(mino instanceof IMino) {
+			mino.setIsIMino(true);
+		}
+		mino.initState();
 	}
 
 }
