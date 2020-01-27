@@ -147,6 +147,8 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 
 			repaint();
 
+			mino.setActionWithFloor(false);
+
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
@@ -181,6 +183,10 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 			mino.setNewPosForHold();
 			repaint();
 			isHold = true;
+		}else if (key == 'a') {
+			mino.spin();
+		} else if (key == 'd') {
+			mino.reverseSpin();
 		}
 	}
 

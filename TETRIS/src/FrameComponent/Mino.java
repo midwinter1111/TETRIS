@@ -42,6 +42,12 @@ public class Mino {
 	// フィールドへの参照
 	protected Field field;
 
+	protected int shadowY;
+
+	// ロックダウン用の設定
+	private int actionNumWithFloor = 0;
+	private boolean actionWithFloor = false;
+
 	public Mino(Field field) {
 		this.field = field;
 		init();
@@ -110,7 +116,7 @@ public class Mino {
 			}
 		}
 		// ミノを下まで落として影の位置を設定
-		int shadowY = pos.y;
+		shadowY = pos.y;
 		while (field.isMovable(new Point(pos.x, shadowY + 1), mino)) {
 			shadowY += 1;
 		}
@@ -126,16 +132,7 @@ public class Mino {
 				}
 			}
 		}
-
 	}
-
-	/*
-	case HARDDROP:
-	while(field.isMovable(new Point(pos.x, pos.y+1),  mino)) {
-		pos.y += 1;
-	}
-	field.lockDown(new Point(pos.x, pos.y), mino, imageNo);
-	return true;*/
 
 	/**
 	 * dirの方向にテトリミノを移動
@@ -144,17 +141,26 @@ public class Mino {
 	 * @return ロックダウンされたらtrueを返す
 	 */
 	public boolean move(int dir) {
+		Point newPos;
 		switch (dir) {
 		case LEFT:
-			Point newPos = new Point(pos.x - 1, pos.y);
-			if (field.isMovable(newPos, mino)) { // 壁と衝突しなければ位置を更新
-				pos = newPos;
+			if (actionNumWithFloor < 15) {
+				newPos = new Point(pos.x - 1, pos.y);
+				if (field.isMovable(newPos, mino)) { // 壁と衝突しなければ位置を更新
+					pos = newPos;
+					actionWithFloor = true;
+					actionNumWithFloor++;
+				}
 			}
 			break;
 		case RIGHT:
-			newPos = new Point(pos.x + 1, pos.y);
-			if (field.isMovable(newPos, mino)) {
-				pos = newPos;
+			if (actionNumWithFloor < 15) {
+				newPos = new Point(pos.x + 1, pos.y);
+				if (field.isMovable(newPos, mino)) {
+					pos = newPos;
+					actionWithFloor = true;
+					actionNumWithFloor++;
+				}
 			}
 			break;
 		case DOWN:
@@ -162,15 +168,17 @@ public class Mino {
 			if (field.isMovable(newPos, mino)) {
 				pos = newPos;
 			} else {
-				field.lockDown(pos, mino, imageNo);
-				return true;
+				if (!actionWithFloor) {
+					actionNumWithFloor = 0;
+					field.lockDown(pos, mino, imageNo);
+					return true;
+				}
 			}
 			break;
 		case HARDDROP:
-			while (field.isMovable(new Point(pos.x, pos.y + 1), mino)) {
-				pos.y += 1;
-			}
-			field.lockDown(new Point(pos.x, pos.y), mino, imageNo);
+			pos = new Point(pos.x, shadowY);
+			actionNumWithFloor = 0;
+			field.lockDown(pos, mino, imageNo);
 			return true;
 		}
 		return false;
@@ -190,12 +198,45 @@ public class Mino {
 		}
 
 		// 回転可能か調べる
+		// TODO: SRS
 		if (field.isMovable(pos, spinnedMino)) {
-			mino = spinnedMino;
+			if (actionNumWithFloor < 15) {
+				actionNumWithFloor++;
+				actionWithFloor = true;
+				mino = spinnedMino;
+			}
+		}
+	}
+
+	/**
+	 * テトリミノを逆回転させる
+	 */
+	public void reverseSpin() {
+		int[][] spinnedMino = new int[ROW][COL];
+
+		// 回転したミノ
+		for (int i = 0; i < ROW; i++) {
+			for (int j = 0; j < COL; j++) {
+				spinnedMino[COL - 1 - j][i] = mino[i][j];
+			}
+		}
+
+		// 回転可能か調べる
+		// TODO: SRS
+		if (field.isMovable(pos, spinnedMino)) {
+			if (actionNumWithFloor < 15) {
+				actionNumWithFloor++;
+				actionWithFloor = true;
+				mino = spinnedMino;
+			}
 		}
 	}
 
 	public void setNewPosForHold() {
 		pos = new Point(4, -4);
+	}
+
+	public void setActionWithFloor(boolean flg) {
+		actionWithFloor = flg;
 	}
 }
