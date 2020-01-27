@@ -60,12 +60,14 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	private NextMinoPanel nextMinoPanel_1;
 	private NextMinoPanel nextMinoPanel_2;
 	private NextMinoPanel nextMinoPanel_3;
+	private NextMinoPanel nextMinoPanel_4;
 
 	// ホールドしたミノへの参照
 	private HoldMinoPanel holdMinoPanel;
 
 	public MainPanel(ScorePanel scorePanel, NextMinoPanel nextMinoPanel_1,
-			NextMinoPanel nextMinoPanel_2, NextMinoPanel nextMinoPanel_3, HoldMinoPanel holdMinoPanel) {
+			NextMinoPanel nextMinoPanel_2, NextMinoPanel nextMinoPanel_3,
+			NextMinoPanel nextMinoPanel_4, HoldMinoPanel holdMinoPanel) {
 		// パネルの推奨サイズを設定、pack()するときに必要
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		// パネルがキー入力を受け付けるようにする
@@ -75,6 +77,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		this.nextMinoPanel_1 = nextMinoPanel_1;
 		this.nextMinoPanel_2 = nextMinoPanel_2;
 		this.nextMinoPanel_3 = nextMinoPanel_3;
+		this.nextMinoPanel_4 = nextMinoPanel_4;
 		this.holdMinoPanel = holdMinoPanel;
 
 		// ブロックのイメージをロード (Eclipse仕様を想定)
@@ -90,6 +93,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
 		nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
 		nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
+		nextMinoPanel_4.set(nextMinos.refferNextMino(3), minoImage);
 		holdMino = null;
 		isHold = false;
 
@@ -109,6 +113,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 				nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
 				nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
 				nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
+				nextMinoPanel_4.set(nextMinos.refferNextMino(3), minoImage);
 				isHold = false;
 			if(isLockDown) {
 				mino = nextMinos.popNextMinoAndSupply();
@@ -140,12 +145,15 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 				nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
 				nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
 				nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
+				nextMinoPanel_4.set(nextMinos.refferNextMino(3), minoImage);
 				holdMinoPanel.set(null, minoImage);
 				mino = nextMinos.popNextMinoAndSupply();
 				nextMinoPanel.set(nextMinos.refferNextMino(0), minoImage);
 			}
 
 			repaint();
+
+			mino.setActionWithFloor(false);
 
 			try {
 				Thread.sleep(500);
@@ -181,6 +189,10 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 			mino.setNewPosForHold();
 			repaint();
 			isHold = true;
+		}else if (key == 'a') {
+			mino.spin();
+		} else if (key == 'd') {
+			mino.reverseSpin();
 		}
 	}
 
