@@ -48,6 +48,11 @@ public class Mino {
 	private int actionNumWithFloor = 0;
 	private boolean actionWithFloor = false;
 
+	// SRS用の設定
+	private boolean isTMino = false;
+	private boolean isIMino = false;
+	private int state = 0;
+
 	public Mino(Field field) {
 		this.field = field;
 		init();
@@ -167,6 +172,7 @@ public class Mino {
 			newPos = new Point(pos.x, pos.y + 1);
 			if (field.isMovable(newPos, mino)) {
 				pos = newPos;
+				actionNumWithFloor = 0;
 			} else {
 				if (!actionWithFloor) {
 					actionNumWithFloor = 0;
@@ -176,7 +182,9 @@ public class Mino {
 			}
 			break;
 		case HARDDROP:
-			pos = new Point(pos.x, shadowY);
+			while (field.isMovable(new Point(pos.x, pos.y + 1), mino)) {
+				pos.y += 1;
+			}
 			actionNumWithFloor = 0;
 			field.lockDown(pos, mino, imageNo);
 			return true;
@@ -190,20 +198,140 @@ public class Mino {
 	public void spin() {
 		int[][] spinnedMino = new int[ROW][COL];
 
-		// 回転したミノ
-		for (int i = 0; i < ROW; i++) {
-			for (int j = 0; j < COL; j++) {
-				spinnedMino[j][ROW - 1 - i] = mino[i][j];
-			}
-		}
+		if (isTMino) {
+			Point newPos = pos;
 
-		// 回転可能か調べる
-		// TODO: SRS
-		if (field.isMovable(pos, spinnedMino)) {
 			if (actionNumWithFloor < 15) {
 				actionNumWithFloor++;
 				actionWithFloor = true;
-				mino = spinnedMino;
+
+				switch (state) {
+				case 0:
+					// □□□□
+					// □□□□
+					// ■■■□
+					// □■□□
+					mino[1][1] = 0;
+					mino[2][0] = 1;
+					if (field.isMovable(pos, mino)) {
+						state = 1;
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y), mino)) {
+						state = 1;
+						newPos = new Point(pos.x + 1, pos.y);
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y + 1), mino)) {
+						state = 1;
+						newPos = new Point(pos.x + 1, pos.y + 1);
+					} else if (field.isMovable(new Point(pos.x, pos.y - 2), mino)) {
+						state = 1;
+						newPos = new Point(pos.x, pos.y - 2);
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y - 2), mino)) {
+						state = 1;
+						newPos = new Point(pos.x + 1, pos.y - 2);
+					} else {
+						mino[1][1] = 1;
+						mino[2][0] = 0;
+					}
+					break;
+				case 1:
+					// □□□□
+					// □■□□
+					// ■■□□
+					// □■□□
+					mino[2][2] = 0;
+					mino[1][1] = 1;
+					if (field.isMovable(pos, mino)) {
+						state = 2;
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y), mino)) {
+						state = 2;
+						newPos = new Point(pos.x + 1, pos.y);
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y - 1), mino)) {
+						state = 2;
+						newPos = new Point(pos.x + 1, pos.y - 1);
+					} else if (field.isMovable(new Point(pos.x, pos.y + 2), mino)) {
+						state = 2;
+						newPos = new Point(pos.x, pos.y + 2);
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y - 2), mino)) {
+						state = 2;
+						newPos = new Point(pos.x + 1, pos.y + 2);
+					} else {
+						mino[2][2] = 1;
+						mino[1][1] = 0;
+					}
+					break;
+				case 2:
+					// □□□□
+					// □■□□
+					// ■■■□
+					// □□□□
+					mino[3][1] = 0;
+					mino[2][2] = 1;
+					if (field.isMovable(pos, mino)) {
+						state = 3;
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y), mino)) {
+						state = 3;
+						newPos = new Point(pos.x - 1, pos.y);
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y + 1), mino)) {
+						state = 3;
+						newPos = new Point(pos.x - 1, pos.y + 1);
+					} else if (field.isMovable(new Point(pos.x, pos.y - 2), mino)) {
+						state = 3;
+						newPos = new Point(pos.x, pos.y - 2);
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y - 2), mino)) {
+						state = 3;
+						newPos = new Point(pos.x - 1, pos.y - 2);
+					} else {
+						mino[3][1] = 1;
+						mino[2][2] = 0;
+					}
+					break;
+				case 3:
+					// □□□□
+					// □■□□
+					// □■■□
+					// □■□□
+					mino[2][0] = 0;
+					mino[3][1] = 1;
+					if (field.isMovable(pos, mino)) {
+						state = 0;
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y), mino)) {
+						state = 0;
+						newPos = new Point(pos.x - 1, pos.y);
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y - 1), mino)) {
+						state = 0;
+						newPos = new Point(pos.x - 1, pos.y - 1);
+					} else if (field.isMovable(new Point(pos.x, pos.y + 2), mino)) {
+						state = 0;
+						newPos = new Point(pos.x, pos.y + 2);
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y + 2), mino)) {
+						state = 0;
+						newPos = new Point(pos.x - 1, pos.y + 2);
+					} else {
+						mino[2][0] = 1;
+						mino[3][1] = 0;
+					}
+					break;
+				default:
+				}
+
+				pos = newPos;
+			}
+
+		} else {
+
+			// 回転したミノ
+			for (int i = 0; i < ROW; i++) {
+				for (int j = 0; j < COL; j++) {
+					spinnedMino[j][ROW - 1 - i] = mino[i][j];
+				}
+			}
+
+			// 回転可能か調べる
+			if (field.isMovable(pos, spinnedMino)) {
+				if (actionNumWithFloor < 15) {
+					actionNumWithFloor++;
+					actionWithFloor = true;
+					mino = spinnedMino;
+				}
 			}
 		}
 	}
@@ -214,20 +342,139 @@ public class Mino {
 	public void reverseSpin() {
 		int[][] spinnedMino = new int[ROW][COL];
 
-		// 回転したミノ
-		for (int i = 0; i < ROW; i++) {
-			for (int j = 0; j < COL; j++) {
-				spinnedMino[COL - 1 - j][i] = mino[i][j];
-			}
-		}
+		if (isTMino) {
+			Point newPos = pos;
 
-		// 回転可能か調べる
-		// TODO: SRS
-		if (field.isMovable(pos, spinnedMino)) {
 			if (actionNumWithFloor < 15) {
 				actionNumWithFloor++;
 				actionWithFloor = true;
-				mino = spinnedMino;
+
+				switch (state) {
+				case 0:
+					// □□□□
+					// □■□□
+					// ■■■□
+					// □□□□
+					mino[3][1] = 0;
+					mino[2][0] = 1;
+					if (field.isMovable(pos, mino)) {
+						state = 3;
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y), mino)) {
+						state = 3;
+						newPos = new Point(pos.x + 1, pos.y);
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y + 1), mino)) {
+						state = 3;
+						newPos = new Point(pos.x + 1, pos.y + 1);
+					} else if (field.isMovable(new Point(pos.x, pos.y - 2), mino)) {
+						state = 3;
+						newPos = new Point(pos.x, pos.y - 2);
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y - 2), mino)) {
+						state = 3;
+						newPos = new Point(pos.x + 1, pos.y - 2);
+					} else {
+						mino[3][1] = 1;
+						mino[2][0] = 0;
+					}
+					break;
+				case 3:
+					// □□□□
+					// □■□□
+					// ■■□□
+					// □■□□
+					mino[2][2] = 0;
+					mino[3][1] = 1;
+					if (field.isMovable(pos, mino)) {
+						state = 2;
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y), mino)) {
+						state = 2;
+						newPos = new Point(pos.x + 1, pos.y);
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y - 1), mino)) {
+						state = 2;
+						newPos = new Point(pos.x + 1, pos.y - 1);
+					} else if (field.isMovable(new Point(pos.x, pos.y + 2), mino)) {
+						state = 2;
+						newPos = new Point(pos.x, pos.y + 2);
+					} else if (field.isMovable(new Point(pos.x + 1, pos.y + 2), mino)) {
+						state = 2;
+						newPos = new Point(pos.x + 1, pos.y + 2);
+					} else {
+						mino[2][2] = 1;
+						mino[3][1] = 0;
+					}
+					break;
+				case 2:
+					// □□□□
+					// □□□□
+					// ■■■□
+					// □■□□
+					mino[1][1] = 0;
+					mino[2][2] = 1;
+					if (field.isMovable(pos, mino)) {
+						state = 1;
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y), mino)) {
+						state = 1;
+						newPos = new Point(pos.x - 1, pos.y);
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y + 1), mino)) {
+						state = 1;
+						newPos = new Point(pos.x - 1, pos.y + 1);
+					} else if (field.isMovable(new Point(pos.x, pos.y - 2), mino)) {
+						state = 1;
+						newPos = new Point(pos.x, pos.y - 2);
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y - 2), mino)) {
+						state = 1;
+						newPos = new Point(pos.x - 1, pos.y - 2);
+					} else {
+						mino[1][1] = 1;
+						mino[2][2] = 0;
+					}
+					break;
+				case 1:
+					// □□□□
+					// □■□□
+					// □■■□
+					// □■□□
+					mino[2][0] = 0;
+					mino[1][1] = 1;
+					if (field.isMovable(pos, mino)) {
+						state = 0;
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y), mino)) {
+						state = 0;
+						newPos = new Point(pos.x - 1, pos.y);
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y - 1), mino)) {
+						state = 0;
+						newPos = new Point(pos.x - 1, pos.y - 1);
+					} else if (field.isMovable(new Point(pos.x, pos.y + 2), mino)) {
+						state = 0;
+						newPos = new Point(pos.x, pos.y + 2);
+					} else if (field.isMovable(new Point(pos.x - 1, pos.y + 2), mino)) {
+						state = 0;
+						newPos = new Point(pos.x - 1, pos.y + 2);
+					} else {
+						mino[2][0] = 1;
+						mino[1][1] = 0;
+					}
+					break;
+				default:
+				}
+				pos = newPos;
+			}
+
+		} else {
+
+			// 回転したミノ
+			for (int i = 0; i < ROW; i++) {
+				for (int j = 0; j < COL; j++) {
+					spinnedMino[COL - 1 - j][i] = mino[i][j];
+				}
+			}
+
+			// 回転可能か調べる
+			if (field.isMovable(pos, spinnedMino)) {
+				if (actionNumWithFloor < 15) {
+					actionNumWithFloor++;
+					actionWithFloor = true;
+					mino = spinnedMino;
+				}
 			}
 		}
 	}
@@ -238,5 +485,17 @@ public class Mino {
 
 	public void setActionWithFloor(boolean flg) {
 		actionWithFloor = flg;
+	}
+
+	public void setIsTMino(boolean flg) {
+		isTMino = flg;
+	}
+
+	public void setIsIMino(boolean flg) {
+		isIMino = flg;
+	}
+
+	public void initState() {
+		state = 0;
 	}
 }
