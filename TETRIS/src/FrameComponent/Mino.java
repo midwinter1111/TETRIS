@@ -469,7 +469,6 @@ public class Mino {
 			}
 
 			// 回転可能か調べる
-			// TODO: SRS
 			if (field.isMovable(pos, spinnedMino)) {
 				if (actionNumWithFloor < 15) {
 					actionNumWithFloor++;
