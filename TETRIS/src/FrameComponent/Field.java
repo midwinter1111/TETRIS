@@ -164,4 +164,9 @@ public class Field {
 		}
 		return false;
 	}
+
+	public boolean isFilled(Point pos) {
+		return (field[pos.y][pos.x] == 1);
+	}
+
 }

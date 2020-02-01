@@ -28,7 +28,6 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	public static final int WIDTH = 192;
 	public static final int HEIGHT = 416;
 
-	// TODO: スコア
 	private static final int USER_DROP = 1;
 	private static final int ONE_LINE = 100;
 	private static final int TWO_LINE = 200;
@@ -45,6 +44,8 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	private Mino holdMino;
 	// ホールドしたかどうか
 	private boolean isHold;
+
+	private boolean isB2B = false;
 
 	// テトリミノのイメージ
 	private Image minoImage;
@@ -88,12 +89,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 
 		field = new Field();
 		nextMinos = new NextMinos(field);
-		mino = nextMinos.popNextMinoAndSupply();
-		SRSMinoCheck(mino);
-		nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
-		nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
-		nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
-		nextMinoPanel_4.set(nextMinos.refferNextMino(3), minoImage);
+		goNextMino();
 		holdMino = null;
 		isHold = false;
 
@@ -109,54 +105,84 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 			// ミノを下方向へ移動する
 			boolean isLockDown = mino.move(Mino.DOWN);
 			if (isLockDown) {
-				mino = nextMinos.popNextMinoAndSupply();
-				SRSMinoCheck(mino);
-				nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
-				nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
-				nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
-				nextMinoPanel_4.set(nextMinos.refferNextMino(3), minoImage);
-				isHold = false;
+				lockDownProcess();
 			}
-
-			// ミノがそろった行を消す
-			int deleteLine = field.deleteLine();
-
-			// 消した行数に応じてスコアをプラスする
-			if (deleteLine == 1) {
-				scorePanel.plusScore(ONE_LINE);
-			} else if (deleteLine == 2) {
-				scorePanel.plusScore(TWO_LINE);
-			} else if (deleteLine == 3) {
-				scorePanel.plusScore(THREE_LINE);
-			} else if (deleteLine == 4) {
-				scorePanel.plusScore(TETRIS);
-			}
-
-			// ゲームオーバーか
-			if (field.isStacked()) {
-				System.out.println("Game Over");
-				// スコアをリセット
-				scorePanel.setScore(0);
-				// フィールドをリセット
-				field = new Field();
-				mino = createMino(field);
-				nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
-				nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
-				nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
-				nextMinoPanel_4.set(nextMinos.refferNextMino(3), minoImage);
-				holdMinoPanel.set(null, minoImage);
-			}
-
 			repaint();
-
 			mino.setActionWithFloor(false);
-
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void lockDownProcess() {
+		// ミノがそろった行を消す
+		int deleteLine = field.deleteLine();
+
+		// 消した行数に応じてスコアをプラスする
+		if (deleteLine == 1) {
+			isB2B = false;
+			if(mino.getIsTMino()) {
+				if(mino.checkTSpinAttack()) {
+					System.out.println("T-Spin Mini!");
+					isB2B = true;
+				}
+			}
+			scorePanel.plusScore(ONE_LINE);
+		} else if (deleteLine == 2) {
+			if(isB2B) {
+				System.out.println("Back-to-Back!");
+			}
+			isB2B = false;
+			if(mino.getIsTMino()) {
+				if(mino.checkTSpinAttack()) {
+					System.out.println("T-Spin Double!!");
+					isB2B = true;
+				}
+			}
+			scorePanel.plusScore(TWO_LINE);
+		} else if (deleteLine == 3) {
+			if(isB2B) {
+				System.out.println("Back-to-Back!");
+			}
+			isB2B = false;
+			if(mino.getIsTMino()) {
+				if(mino.checkTSpinAttack()) {
+					System.out.println("T-Spin Triple!!");
+					isB2B = true;
+				}
+			}
+			scorePanel.plusScore(THREE_LINE);
+		} else if (deleteLine == 4) {
+			if(isB2B) {
+				System.out.println("Back-to-Back!");
+			}
+			System.out.println("TETRIS!!");
+			scorePanel.plusScore(TETRIS);
+			isB2B = true;
+		} else {
+			// delete 0 line
+			isB2B = false;
+		}
+
+		// ゲームオーバーか
+		if (field.isStacked()) {
+			System.out.println("Game Over");
+			// スコアをリセット
+			scorePanel.setScore(0);
+			// フィールドをリセット
+			field = new Field();
+			mino = createMino(field);
+			nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
+			nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
+			nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
+			nextMinoPanel_4.set(nextMinos.refferNextMino(3), minoImage);
+			holdMinoPanel.set(null, minoImage);
+		}
+		goNextMino();
+		isHold = false;
 	}
 
 	public void paintComponent(Graphics g) {
@@ -174,8 +200,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		if (key == 'q' && !isHold) {
 			if (holdMino == null) {
 				holdMino = mino;
-				mino = nextMinos.popNextMinoAndSupply();
-				SRSMinoCheck(mino);
+				goNextMino();
 				holdMinoPanel.set(holdMino, minoImage);
 			} else {
 				Mino tmpMino = holdMino;
@@ -186,7 +211,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 			mino.setNewPosForHold();
 			repaint();
 			isHold = true;
-		}else if (key == 'a') {
+		} else if (key == 'a') {
 			mino.spin();
 		} else if (key == 'd') {
 			mino.reverseSpin();
@@ -205,6 +230,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 			scorePanel.plusScore(USER_DROP);
 		} else if (key == KeyEvent.VK_UP) {
 			mino.move(Mino.HARDDROP);
+			lockDownProcess();
 		} else if (key == KeyEvent.VK_SPACE || key == KeyEvent.VK_UP) { // ブロックを回転
 			mino.spin();
 		}
@@ -213,7 +239,16 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	}
 
 	public void keyReleased(KeyEvent e) {
+		// do nothing
+	}
 
+	public void goNextMino() {
+		mino = nextMinos.popNextMinoAndSupply();
+		SRSMinoCheck(mino);
+		nextMinoPanel_1.set(nextMinos.refferNextMino(0), minoImage);
+		nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
+		nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
+		nextMinoPanel_4.set(nextMinos.refferNextMino(3), minoImage);
 	}
 
 	private Mino createMino(Field field) {
@@ -239,7 +274,7 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 	}
 
 	/**
-	 * ブロックのイメージをロード
+	 * Load mino image
 	 *
 	 * @param filename
 	 */
@@ -249,13 +284,18 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		minoImage = icon.getImage();
 	}
 
+	/**
+	 * Check whether TMino (IMino) or not
+	 *
+	 * @param mino
+	 */
 	public void SRSMinoCheck(Mino mino) {
 		mino.setIsTMino(false);
 		mino.setIsIMino(false);
-		if(mino instanceof TMino) {
+		if (mino instanceof TMino) {
 			mino.setIsTMino(true);
 		}
-		if(mino instanceof IMino) {
+		if (mino instanceof IMino) {
 			mino.setIsIMino(true);
 		}
 		mino.initState();

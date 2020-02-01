@@ -53,6 +53,8 @@ public class Mino {
 	private boolean isIMino = false;
 	private int state = 0;
 
+	private boolean finalActionIsTSpin = false;
+
 	public Mino(Field field) {
 		this.field = field;
 		init();
@@ -156,6 +158,7 @@ public class Mino {
 					actionWithFloor = true;
 					actionNumWithFloor++;
 				}
+				finalActionIsTSpin = false;
 			}
 			break;
 		case RIGHT:
@@ -166,6 +169,7 @@ public class Mino {
 					actionWithFloor = true;
 					actionNumWithFloor++;
 				}
+				finalActionIsTSpin = false;
 			}
 			break;
 		case DOWN:
@@ -314,6 +318,7 @@ public class Mino {
 				}
 
 				pos = newPos;
+				finalActionIsTSpin = true;
 			}
 
 		} else {
@@ -457,6 +462,7 @@ public class Mino {
 				default:
 				}
 				pos = newPos;
+				finalActionIsTSpin = true;
 			}
 
 		} else {
@@ -493,6 +499,29 @@ public class Mino {
 
 	public void setIsIMino(boolean flg) {
 		isIMino = flg;
+	}
+
+	public boolean getIsTMino() {
+		return isTMino;
+	}
+
+	public boolean checkTSpinAttack() {
+		boolean flg = false;
+
+		int filledAreaCount = 0;
+		if (field.isFilled(new Point(pos.x + 1, pos.y)))
+			filledAreaCount++;
+		if (field.isFilled(new Point(pos.x + 1, pos.y + 2)))
+			filledAreaCount++;
+		if (field.isFilled(new Point(pos.x + 3, pos.y)))
+			filledAreaCount++;
+		if (field.isFilled(new Point(pos.x + 3, pos.y + 2)))
+			filledAreaCount++;
+
+		if (finalActionIsTSpin && filledAreaCount >= 3)
+			flg = true;
+
+		return flg;
 	}
 
 	public void initState() {
