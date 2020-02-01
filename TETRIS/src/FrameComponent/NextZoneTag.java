@@ -26,7 +26,7 @@ public class NextZoneTag extends JPanel{
 		Font font = new Font("Ariel", Font.BOLD, 16);
 		g.setFont(font);
 
-		g.drawString("NEXT", 16, 12);
+		g.drawString("Next", 16, 12);
 	}
 
 }

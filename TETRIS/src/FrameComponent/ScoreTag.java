@@ -7,12 +7,12 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-public class HoldZoneTag extends JPanel{
+public class ScoreTag extends JPanel{
 	// パネルサイズ
 	public static final int WIDTH = 96;
 	public static final int HEIGHT = 16;
 
-	public HoldZoneTag() {
+	public ScoreTag() {
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 	}
 
@@ -20,13 +20,13 @@ public class HoldZoneTag extends JPanel{
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 
-		// "HOLD"と描画
-		g.setColor(Color.GREEN);
+		// "NEXT"と描画
+		g.setColor(Color.ORANGE);
 		// フォントを作成
 		Font font = new Font("Ariel", Font.BOLD, 16);
 		g.setFont(font);
 
-		g.drawString("Hold", 16, 12);
+		g.drawString("Score", 16, 12);
 	}
 
 }

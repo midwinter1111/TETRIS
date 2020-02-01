@@ -88,7 +88,7 @@ public class Field {
 						if (newPos.x + j <= 0 || newPos.x + j >= COL - 1) {
 							return false;
 						}
-					} else if ((newPos.x + i) < -1) {
+					} else if ((newPos.x + j) < -1) {
 						return false;
 					} else if (field[newPos.y + i][newPos.x + j] == 1) { // フィールド内で
 						// 移動先にすでにブロック（壁含む）がある場合は移動できない
