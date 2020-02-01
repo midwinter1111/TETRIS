@@ -164,4 +164,9 @@ public class Field {
 		}
 		return false;
 	}
+
+	public boolean isFilled(Point pos, int x, int y) {
+		return (field[(pos.y + x + 2)][(pos.x + y)] == 1);
+	}
+
 }
