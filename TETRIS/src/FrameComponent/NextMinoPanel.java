@@ -27,6 +27,8 @@ public class NextMinoPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
+		g.setColor(Color.ORANGE);
+		g.drawRect(10, 10, WIDTH - 20, WIDTH - 20);
 
 		// ネクストを描画
 		if (nextMino != null) {

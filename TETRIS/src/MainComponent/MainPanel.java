@@ -171,8 +171,8 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		// フィールドを描画
 		field.draw(g, minoImage);
 		// テトリミノを描画
-		mino.draw(g, minoImage);
 		mino.drawShadow(g, minoImage);
+		mino.draw(g, minoImage);
 	}
 
 	public void keyTyped(KeyEvent e) {
