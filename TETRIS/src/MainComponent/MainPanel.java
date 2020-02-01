@@ -22,6 +22,7 @@ import Minos.NextMinos;
 import Minos.OMino;
 import Minos.SMino;
 import Minos.TMino;
+import Minos.NextMinos;
 
 public class MainPanel extends JPanel implements KeyListener, Runnable {
 	// パネルサイズ
@@ -249,28 +250,6 @@ public class MainPanel extends JPanel implements KeyListener, Runnable {
 		nextMinoPanel_2.set(nextMinos.refferNextMino(1), minoImage);
 		nextMinoPanel_3.set(nextMinos.refferNextMino(2), minoImage);
 		nextMinoPanel_4.set(nextMinos.refferNextMino(3), minoImage);
-	}
-
-	private Mino createMino(Field field) {
-		int minoNo = rand.nextInt(7);
-		switch (minoNo) {
-		case Mino.IMino:
-			return new IMino(field);
-		case Mino.ZMino:
-			return new Mino(field);
-		case Mino.SMino:
-			return new SMino(field);
-		case Mino.LMino:
-			return new LMino(field);
-		case Mino.JMino:
-			return new JMino(field);
-		case Mino.TMino:
-			return new TMino(field);
-		case Mino.OMino:
-			return new OMino(field);
-		}
-
-		return null;
 	}
 
 	/**
