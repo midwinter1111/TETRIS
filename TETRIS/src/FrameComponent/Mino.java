@@ -509,13 +509,13 @@ public class Mino {
 		boolean flg = false;
 
 		int filledAreaCount = 0;
-		if (field.isFilled(new Point(pos.x + 1, pos.y)))
+		if (field.isFilled(pos, 1, 0))
 			filledAreaCount++;
-		if (field.isFilled(new Point(pos.x + 1, pos.y + 2)))
+		if (field.isFilled(pos, 1, 2))
 			filledAreaCount++;
-		if (field.isFilled(new Point(pos.x + 3, pos.y)))
+		if (field.isFilled(pos, 3, 0))
 			filledAreaCount++;
-		if (field.isFilled(new Point(pos.x + 3, pos.y + 2)))
+		if (field.isFilled(pos, 3, 2))
 			filledAreaCount++;
 
 		if (finalActionIsTSpin && filledAreaCount >= 3)
